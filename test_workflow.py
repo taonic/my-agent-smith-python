@@ -2,7 +2,7 @@
 
 import asyncio
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 from temporalio.client import Client
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
@@ -47,8 +47,8 @@ class TestContentAmplifierWorkflow(unittest.IsolatedAsyncioTestCase):
         await self.env.shutdown()
     
     @patch('activities.requests.get')
-    @patch('activities.llm_client.summarise_diff')
-    @patch('activities.llm_client.select')
+    @patch('activities.llm_client.summarise_diff', new_callable=AsyncMock)
+    @patch('activities.llm_client.select', new_callable=AsyncMock)
     async def test_workflow_with_content_change(self, mock_select, mock_summarise, mock_get):
         """Test the workflow when content changes."""
         # Mock the HTTP response

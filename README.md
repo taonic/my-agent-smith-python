@@ -38,8 +38,19 @@ pip install -r requirements.txt
 
 ### Start the Temporal Worker
 
+Using the mock LLM client (default):
 ```bash
 python worker.py
+```
+
+Using the Amazon Bedrock LLM client:
+```bash
+python worker.py --use-bedrock
+```
+
+With custom model ID and region:
+```bash
+python worker.py --use-bedrock --model-id anthropic.claude-v2 --region us-east-1
 ```
 
 ### Start the Workflow
@@ -53,8 +64,16 @@ python starter.py
 Edit `constants.py` to configure:
 
 - `MONITORED_URL`: The URL to monitor for content changes
-- `MODEL_ID`: The Amazon Bedrock model ID to use
+- `MODEL_ID`: The default Amazon Bedrock model ID to use
 - `TASK_QUEUE`: The Temporal task queue name
+
+## Command Line Arguments
+
+The worker supports the following command line arguments:
+
+- `--use-bedrock`: Use the Bedrock LLM client instead of the mock client
+- `--model-id`: Specify a custom Bedrock model ID (overrides the one in constants.py)
+- `--region`: Specify a custom AWS region for Bedrock (defaults to us-west-2)
 
 ## Testing
 
@@ -63,12 +82,3 @@ Run the tests:
 ```bash
 python -m unittest test_workflow.py
 ```
-
-## Development
-
-To use the mock LLM client (default):
-- No additional configuration needed
-
-To use the Amazon Bedrock LLM client:
-- Configure AWS credentials
-- Uncomment the appropriate line in `worker.py`

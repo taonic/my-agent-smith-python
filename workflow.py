@@ -54,29 +54,28 @@ class ContentAmplifierWorkflow:
                 workflow.logger.info("Content has changed, processing updates")
                 
                 # Summarize the differences using ContentDiffInput data class
-                diff_input = ContentDiffInput(
-                    prev_content=self.last_content,
-                    current_content=content
-                )
                 summary = await workflow.execute_activity(
                     summarise_content_diff,
                     ContentDiffInput(prev_content=self.last_content, current_content=content),
                     **config
                 )
                 
-                # Select promotion channel
-                channel = await workflow.execute_activity(
-                    select_promotion_channel,
-                    summary,
-                    **config
-                )
-                
-                # Promote the content using PromoteContentInput data class
-                await workflow.execute_activity(
-                    promote_content,
-                    PromoteContentInput(summary=summary, channel=channel),
-                    **config
-                )
+                if summary != "":
+                    workflow.logger.info(f"Summary: {summary}")
+                    
+                    # Select promotion channel
+                    channel = await workflow.execute_activity(
+                        select_promotion_channel,
+                        summary,
+                        **config
+                    )
+                    
+                    # Promote the content using PromoteContentInput data class
+                    await workflow.execute_activity(
+                        promote_content,
+                        PromoteContentInput(summary=summary, channel=channel),
+                        **config
+                    )
                 
                 # Update the last content and hash
                 self.last_content_hash = content_hash
