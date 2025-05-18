@@ -6,7 +6,7 @@ import argparse
 from datetime import timedelta
 from temporalio.client import Client, Schedule, ScheduleSpec, ScheduleState
 from workflow import ContentAmplifierWorkflow
-from constants import TASK_QUEUE
+from constants import TASK_QUEUE, MONITORED_URL
 
 
 async def start_workflow(monitored_url):
@@ -31,7 +31,7 @@ async def start_workflow(monitored_url):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Start Content Amplifier workflow')
-    parser.add_argument('--url', required=True, help='URL to monitor')
+    parser.add_argument('--url', default=MONITORED_URL, help='URL to monitor')
     args = parser.parse_args()
     
     asyncio.run(start_workflow(args.url))

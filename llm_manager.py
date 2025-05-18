@@ -61,7 +61,17 @@ class BedrockLLM(LLMClient):
     
     async def select(self, diff_summary: str) -> str:
         """Select appropriate channels for promotion based on content."""
-        prompt = f"Review the difference summary provided here {diff_summary} and suggest all the engagement channels this summary should be posted on, the engagement channel options are: Github, Slack #security, Slack #APIs, Slack #DevOps, InternalDevPortal"
+        prompt = f"""
+                Review the difference summary provided here: {diff_summary}
+                and suggest all the engagement channels this summary should be posted on.
+                It should return a json list of strings with the channel names.
+                The engagement channel options are:
+                - Github
+                - Slack #security
+                - Slack #APIs
+                - Slack #DevOps
+                - InternalDevPortal
+                """
         return await self.invoke_bedrock(prompt)
     
     async def invoke_bedrock(self, prompt: str) -> str:
@@ -79,8 +89,6 @@ class BedrockLLM(LLMClient):
                 }
             }
             
-            print(request_body)
-            
             async with self.session.client(
                 service_name='bedrock-runtime',
                 region_name=self.region
@@ -93,10 +101,8 @@ class BedrockLLM(LLMClient):
                 
                 # aioboto3 response handling is slightly different
                 body = await response['body'].read()
-                print(f"Response body: {body}")
                 response_body = json.loads(body)
                 response_text = response_body["results"][0]["outputText"]
-                print(f"Model output: {response_text}")
                 return response_text
         except Exception as e:
             print(f"Error invoking Bedrock: {e}")

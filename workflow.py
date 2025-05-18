@@ -34,7 +34,6 @@ class ContentAmplifierWorkflow:
             retry_policy=RetryPolicy(
                 initial_interval=timedelta(seconds=1),
                 maximum_interval=timedelta(seconds=10),
-                maximum_attempts=3
             )
         )
         
